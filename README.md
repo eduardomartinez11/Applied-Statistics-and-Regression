@@ -1,10 +1,10 @@
 # Multiple-Linear-Regression-MLR
 
-## Example code and solutions to some assignments and projects involving MLR. 
+### Example Code and Solutions to Assignments/Projects involving MLR. 
 
-- These assignments were completed during my undergraduate and graduate studies  and , respectively.
+- These assignments were completed during my undergraduate (primarily junior & senior year) and graduate studie.
 
-## About Me
+### About Me
 
 - B.A. in Mathematics and Psychology (double-major) from Saint Leo University 
   + (Completed 2020)
