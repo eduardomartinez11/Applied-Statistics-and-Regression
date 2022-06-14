@@ -1,4 +1,4 @@
-- $\underline{\text{Type:}}$ My Solutions to a Homework Problem 
+- $\underline{\text{Type:}}$ Homework Problem involving the *Supervisor Performance* dataset (Table 3.3)
 - $\underline{\text{Course:}}$ Applied Statistics / Regression (MATH-564)
 - $\underline{\text{Level:}}$ Graduate Course
 - $\underline{\text{Institution:}}$ Illinois Institute of Technology (IIT)
