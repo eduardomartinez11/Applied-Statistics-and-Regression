@@ -1,4 +1,4 @@
-\underline{\textbf{File Details}}:
+$\underline{\textbf{File Details}}:$
 
 - $\underline{\text{Type:}}$ Homework Problem involving the *Supervisor Performance* dataset (Table 3.3)
 - $\underline{\text{Course:}}$ Applied Statistics / Regression (MATH-564)
