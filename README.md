@@ -1,8 +1,11 @@
-# Multiple-Linear-Regression-MLR
+# Example Code and Solutions to Assignments and Projects  
 
-### Example Code and Solutions to Assignments/Projects involving MLR. 
+- Graduate Course: Applied Statistics/Regression (Math-564)
 
-- These assignments were completed during my undergraduate (primarily junior & senior year) and graduate studie.
+- Institution: Illinois Institute of Technology
+
+- Semester: Fall 2021
+
 
 ### About Me
 
