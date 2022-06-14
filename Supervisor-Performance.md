@@ -1,6 +1,0 @@
-- $\underline{\text{Type:}}$ My Solutions to a Homework Problem 
-- $\underline{\text{Course:}}$ Applied Statistics / Regression (MATH-564)
-- $\underline{\text{Level:}}$ Graduate Course
-- $\underline{\text{Institution:}}$ Illinois Institute of Technology (IIT)
-- $\underline{\text{Semester:}}$ Fall, 2021
-- $\underline{\text{Course Textbook:}}$ Chatterjee, S. & Hadi, A. S. (2012). *Regression Analysis by Example.* (Fifth Edition).
