@@ -1,10 +1,13 @@
-# Example Code and Solutions to Assignments and Projects  
-
-- Graduate Course: Applied Statistics/Regression (Math-564)
+# Graduate Course: Applied Statistics/Regression (Math-564)
 
 - Institution: Illinois Institute of Technology
 
 - Semester: Fall 2021
+
+
+# Description
+
+This repository contains my code and solutions to assignments and projects/
 
 
 ### About Me
