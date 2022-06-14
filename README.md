@@ -10,7 +10,7 @@
 This repository contains my code and solutions to assignments and projects/
 
 
-### About Me
+# About Me
 
 - B.A. in Mathematics and Psychology (double-major) from Saint Leo University 
   + (Completed 2020)
