@@ -7,7 +7,7 @@
 
 # Description
 
-This repository contains my code and solutions to assignments and projects.
+This repository contains my code and solutions to assignments and final project for Math-564.
 
 
 # About Me
