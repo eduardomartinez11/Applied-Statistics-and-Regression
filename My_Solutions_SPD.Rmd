@@ -1,0 +1,223 @@
+---
+title: "Multiple Linear Regression (MLR) Analysis"
+author: "Eduardo Martinez"
+date: "9/12/2021"
+output:
+  pdf_document:
+    toc: yes
+    toc_depth: 1
+    fig_height: 4
+    fig_width: 6
+  html_document:
+    toc: yes
+    toc_depth: 2
+    code_folding: hide
+  html_notebook:
+    toc: yes
+    toc_depth: 2
+    code_folding: hide
+geometry:
+- top=1.6cm
+- left=1.6cm
+- right=1.6cm
+- bottom=1.7cm
+linestretch: 1.1
+urlcolor: blue
+citecolor: blue
+linkcolor: blue
+fontsize: 11pt
+header-includes: \usepackage{mathtools} \usepackage{amsmath} \usepackage{siunitx}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, comment = "")
+source("~/Desktop/MyFunctions.R")
+```
+
+
+\vspace{3mm} \hrule
+
+
+### File Background Information:
+
+- $\underline{\text{Type:}}$ My Solutions to a Homework Problem 
+- $\underline{\text{Course:}}$ Applied Statistics / Regression (MATH-564)
+- $\underline{\text{Level:}}$ Graduate Course
+- $\underline{\text{Institution:}}$ Illinois Institute of Technology (IIT)
+- $\underline{\text{Semester:}}$ Fall, 2021
+- $\underline{\text{Course Textbook:}}$ Chatterjee, S. & Hadi, A. S. (2012). *Regression Analysis by Example.* (Fifth Edition).
+
+\vspace{2mm}
+
+### R Packages Used:
+
+```{r, echo=TRUE, warning=FALSE, message=FALSE}
+library(knitr, quietly = T)
+library(kableExtra, quietly = T, warn.conflicts = F)
+library(tidyverse, quietly = T, warn.conflicts = F)
+```
+
+
+-----
+
+
+# Problem Instructions:
+
+Consider the _Supervisor Performance Data_ in Table 3.3 on page 60 of the TEXT.    
+
+(1) Estimate  the regression coefficients vector $\hat\beta$. 
+(2) Verify that $\sum\limits_{i=1}^{n} \hat y_i = \sum\limits_{i=1}^{n} y_i$.
+(3) Now consider $p=2$ with $X_3$ and $X_4$ being the only two predictors used.
+    The model becomes $$Y = \beta_0 + \beta_3 X_3 + \beta_4 X_4 + \epsilon.$$
+    Use the 3-step method described on page 63 to obtain the coefficient for $X_3$, 
+    and compare it with the coefficient of $X_3$ by regressing $Y$ on $X_3$ and $X_4$ using the 2-predictor model above. 
+    Are they the same? Explain why or why not.
+
+
+\newpage
+
+# The Data:
+
+\vspace{3mm} 
+
+```{r}
+table3.3 <- read_tsv("Table3.3.txt", show_col_types = F)
+LaTeX_tab <- cbind(Row = 1:30, table3.3)
+colnames(LaTeX_tab) <- c("Row", "$Y$", "$X_1$", "$X_2$", "$X_3$", "$X_4$", "$X_5$", "$X_6$")
+kbl(LaTeX_tab, booktabs = T, escape = F, align = "c") %>%
+  kable_classic() %>%
+  kable_styling(latex_options = c("condensed", "striped", "HOLD_position"), font_size = 11) %>%
+  column_spec(1:8, width = "15mm") %>%
+  add_header_above(header = c(" "=1, "\\\\textbf{Table 3.3} $~$ \\\\text{Supervisor Performance Data}"=7),
+                   font_size = 12, escape = F)
+```
+
+
+
+
+
+\newpage
+
+
+# My Solutions:
+
+\vspace{3mm}
+
+(1) Estimate  the regression coefficients vector $\hat\beta$.    
+
+\vspace{3mm}
+
+```{r}
+fit3.3 <- lm(Y ~., data = table3.3)
+
+LaTeX_vars <- c("(Intercept)", paste("$X_", 1:6, "$", sep = ""))
+Beta_labs <- paste("$\\beta_", 0:6, "$", sep = "")
+Coef_LaTeX <- tibble(Variable = LaTeX_vars, Coefficeint = Beta_labs, Estimate = round(coef(fit3.3), 3)) 
+
+kbl(Coef_LaTeX, booktabs = T, escape = F, align = "c", linesep = "") %>%
+  kable_classic() %>%
+  kable_styling(latex_options = c("striped", "HOLD_position"), font_size = 11) %>%
+  column_spec(1:3, width = "1.35in") %>%
+  add_header_above(header = c("Estimated Regression Coefficeints"=3), font_size = 12, bold = T)
+```
+
+
+
+\vspace{8mm} \hrule \vspace{8mm}
+
+
+(2) Verify that $\sum\limits_{i=1}^{n} \hat y_i = \sum\limits_{i=1}^{n} y_i$.     
+
+\vspace{3mm}
+
+```{r}
+sum1 <- sum(fit3.3$fitted.values)
+sum2 <- sum(table3.3$Y)
+```
+
+
+\begin{center}
+$\sum\limits_{i=1}^{n} \hat y_i =$ `r sum1` $~~~$ and $~~~$ $\sum\limits_{i=1}^{n} y_i =$ `r sum2` ${\Large ~~ \checkmark}$
+\end{center}
+
+
+
+\vspace{8mm} \hrule \vspace{8mm}
+
+
+\newpage
+
+
+(3) Now consider $p=2$ with $X_3$ and $X_4$ being the only two predictors used.
+    The model becomes $$Y = \beta_0 + \beta_3 X_3 + \beta_4 X_4 + \epsilon.$$
+    Use the 3-step method described on page 63 to obtain the coefficient for $X_3$, 
+    and compare it with the coefficient of $X_3$ by regressing $Y$ on $X_3$ and $X_4$ using the 2-predictor model above. 
+    Are they the same? Explain why or why not.
+
+\vspace{3mm}
+
+### Step 1:
+
+```{r}
+fit_X4 <- lm(Y ~ X4, data = table3.3)
+coefX4 <- round(coefficients(fit_X4), 4)
+```
+
+\begin{center}
+$\hat Y =$ `r coefX4[[1]]` + `r coefX4[[2]]` $X_4$
+\end{center}
+
+
+### Step 2:
+
+```{r}
+fit_X3 <- lm(X3 ~ X4, data = table3.3)
+coefX3 <- round(coefficients(fit_X3), 4)
+```
+
+\begin{center}
+$\hat X_3 =$ `r coefX3[[1]]` + `r coefX3[[2]]` $X_4$
+\end{center}
+
+
+### Step 3:
+
+```{r}
+fit_eYX4 <- lm(fit_X4$residuals ~ fit_X3$residuals)
+coef_eYX4 <- round(coefficients(fit_eYX4), 4)
+```
+
+
+\begin{center}
+$\hat e_{Y \cdot X_4}=$ `r coef_eYX4[[1]]` + `r coef_eYX4[[2]]` $e_{X_3 \cdot X_4}$
+\end{center}
+
+
+\vspace{2mm}
+
+
+## MLR (Two-Predictor) Model:
+
+```{r}
+fit_X3X4 <- lm(Y~ X3 + X4, data = table3.3)
+coefX3X4 <- round(coefficients(fit_X3X4), 4)
+```
+
+
+\begin{center}
+$\hat Y =$ `r coefX3X4[[1]]` + `r coefX3X4[[2]]` $X_3$ + `r coefX3X4[[3]]` $X_4$
+\end{center}
+
+
+\vspace{2mm}
+
+
+## $\underline{\textbf{Conclusion}}$
+
+The estimated coefficient, $\hat{\beta}_3$, for $X_3$ was equal to $0.4321$ when applying the 3-step procedure of SLR models and when using a MLR model.
+
+As a result, $\hat{\beta}_3$ can be found using either a series of SLR models or the associated MLR model.
+
+
+
+
