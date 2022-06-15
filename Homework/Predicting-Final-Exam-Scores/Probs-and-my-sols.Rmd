@@ -1,0 +1,373 @@
+---
+output:
+  pdf_document:
+    toc: no
+    fig_height: 4
+    fig_width: 6
+  html_document:
+    toc: yes
+    toc_depth: 1
+    code_folding: "hide"
+  html_notebook:
+    toc: yes
+    toc_depth: 1
+    code_folding: "hide"
+geometry:
+  - top=1.7cm
+  - left=1.6cm
+  - right=1.6cm
+  - bottom=1.7cm
+linestretch: 1.1
+urlcolor: blue
+citecolor: blue
+linkcolor: blue
+fontsize: 11pt
+header-includes: 
+  - \usepackage{mathtools} 
+  - \usepackage{amsmath} 
+  - \usepackage{siunitx}
+  - \usepackage[labelformat=empty]{caption}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, comment = "")
+```
+
+
+
+\begin{gather*}
+{\Large \textbf{Predicting Final Exam Scores}} \\
+{\Large \text{Eduardo Martinez}} 
+\end{gather*}
+
+\vspace{-1cm}
+
+\begin{flalign*}
+& \underline{\text{Type}}: \text{Homework Problem} & ~ &
+\underline{\text{Course}}: \text{Applied Statistics/Regression (MATH-564)} \\
+& \underline{\text{Date Completed}}: \text{9/12/2021}  & ~ &
+\underline{\text{Institution}}: \text{Illinois Institute of Technology}
+\end{flalign*}
+
+
+\vspace{1mm} \hrule \vspace{4mm}
+
+
+```{r, warning=FALSE, message=FALSE}
+# Packages Used:
+library(knitr)
+library(kableExtra, warn.conflicts = F)
+library(tidyverse, warn.conflicts = F)
+```
+
+
+# The Data
+
+```{r}
+table3.10 <- read_tsv("Table3.10.txt", show_col_types = F)[c(2,3,1)]
+Table3.10 <- cbind(Index = 1:22, table3.10)
+colnames(Table3.10) <- c("Index", "$P_1$", "$P_2$", "$F$")
+```
+
+
+```{r}
+kbl(cbind(Table3.10[1:11,], Table3.10[12:22,]), booktabs = T, escape = F, 
+    align = "c", linesep = "", valign = "c",
+    caption = "$\\textbf{Table 3.10} - \\text{Examination Data}$") %>%
+  kable_classic() %>%
+  kable_styling(latex_options = c("condensed", "striped", "HOLD_position"), font_size = 11) %>%
+  column_spec(c(2:4, 6:7), width = "1.25cm") %>%
+  column_spec(c(1,5), width = "1.5cm", border_left = T, border_right = F) %>%
+  column_spec(8, width = "1.25cm", border_right = T) 
+```
+
+
+
+
+\newpage
+
+# $$\underline{\textbf{Exercise 3.3}}$$
+
+Table 3.10 shows the scores in the final examination $F$ and the scores in two
+preliminary examinations $P_1$ and $P_2$ for $22$ students in a statistics course
+
+------
+
+(a) Fit each of the following models to the data: \vspace{-8mm}
+
+\begin{align*}
+\text{Model 1:} & \quad F = \beta_0 + \beta_1 P_1 \hphantom{+ \beta_2 P_2 ~} + \varepsilon \\
+\text{Model 2:} & \quad F = \beta_0 \hphantom{+ \beta_1 P_1 ~} + \beta_2 P_2 + \varepsilon \\
+\text{Model 3:} & \quad F = \beta_0 + \beta_1 P_1 + \beta_2 P_2 + \varepsilon
+\end{align*}
+
+
+```{r}
+fit_P1 <- lm(`F` ~ P1, data = table3.10)
+coefP1 <- round(coefficients(fit_P1), 3)
+
+fit_P2 <- lm(`F` ~ P2, data = table3.10)
+coefP2 <- round(coefficients(fit_P2), 3)
+
+fit_P1P2 <- lm(`F` ~., data = table3.10)
+coefP1P2 <- round(coefficients(fit_P1P2), 3)
+```
+
+\vspace{2mm}
+
+\begin{center}
+
+$\text{Fitted Model 1:} \hspace{0.253cm} \hat{F} =$ `r coefP1[[1]]` $+$  `r coefP1[[2]]` $P_1$  $\hphantom{+ 20.672 P_2 ~}$ 
+
+$\text{Fitted Model 2:} \hspace{0.25cm} \hat{F} = \hspace{1.025mm}$ `r coefP2[[1]]` $\hphantom{-22.342 P_2 ~}$ $+$ `r coefP2[[2]]` $P_2$   
+
+$\text{Fitted Model 3:} \hspace{0.25cm} \hat{F} = \hspace{0.275mm}$ `r coefP1P2[[1]]` $+$  `r coefP1P2[[2]]` $P_1$ $+$  `r coefP1P2[[3]]` $P_2$
+
+\end{center}
+
+
+\vspace{6mm} \hrule \vspace{6mm}
+
+
+(b) Test whether $\beta_0 = 0$ in each of the three models.
+
+
+\vspace{2mm}
+
+I will use t-test hypothesis test for each model where $H_0: \hat\beta_0 = 0$ and $H_A: \hat\beta_0 \neq 0$.
+
+There are $n=22$ rows in the dataset. 
+Under the null, the critical t-value has $n-p$ degrees of freedom (\textit{d.f.}), where $p$ equals the number of coefficients in the alternative regression model. 
+Equivalently, $p$ equals the number of predictors in a regression model since the intercept term is removed under the null.
+
+Thus, Model 1 and Model 2 both have $20$ \textit{d.f.} and Model 3 has $19$ \textit{d.f.}
+
+Using a significance level, $\alpha = 0.05$, then the critical t-values for a two-tailed test are the following: \vspace{-2mm}
+
+$$
+t_{(\alpha / 2, \ \textit{d.f.} = 20)} = \pm 2.086 \hspace{1.5cm} \text{and} \hspace{1.575cm} t_{(\alpha / 2, \ \textit{d.f.} = 19)} = \pm 2.093
+$$
+
+
+Next, the following equation is used to calculate the test statistic for 
+$H_A: \ t^* = \dfrac{\hat\beta_0 - 0}{s.e. \big(\hat\beta_0\big)}$. 
+
+We reject $H_0$ in favor of $H_A$ if $|t^{\ast}| > |t_{(\alpha / 2, \ \textit{d.f.})}|$.
+
+
+```{r}
+# Saving Model Summaries
+sumP1 <- summary(fit_P1)
+sumP2 <- summary(fit_P2)
+sumP1P2 <- summary(fit_P1P2)
+# Obtaining Standard Errors
+seP1B0 <- sumP1$coefficients[1,2]
+seP2B0 <- sumP2$coefficients[1,2]
+seP1P2B0 <- sumP1P2$coefficients[1,2]
+```
+
+```{r, include=FALSE}
+# coefP1[[1]]
+# seP1B0
+# coefP1[[1]] / seP1B0
+# 
+# coefP2[[1]]
+# seP2B0
+# coefP2[[1]] / seP2B0
+# 
+# coefP1P2[[1]]
+# seP1P2B0
+# coefP1P2[[1]] / seP1P2B0
+```
+
+
+\vspace{-4mm}
+
+\begin{align*}
+\text{Model 1:} & \hspace{0.5cm} |t^*| = \left| \dfrac{-22.342}{~~~11.564}\right| 
+= 1.932  ~ < 2.086  = |t_{(0.025, \ 20)}| \\
+\text{Model 2:} & \hspace{0.5cm} |t^*| = \left| \dfrac{-1.854}{~~~ 7.562}\right| 
+\hspace{2mm} = 0.245 ~ < 2.086  = |t_{(0.025, \ 20)}| \\
+\text{Model 3:} & \hspace{0.5cm} |t^*| = \left| \dfrac{-14.501}{\hspace{4.75mm} 9.236}\right| 
+= \hspace{.1mm} 1.570 ~ < 2.093 = |t_{(0.025, \ 19)}|
+\end{align*}
+
+
+### $\underline{\textbf{Conclusion}}$
+
+In all three models $|t^*| < |t_{(\alpha / 2, \ d.f.)}$. 
+As a result, we fail to reject the null hypothesis for all models. 
+There is insufficient evidence in favor of the alternative hypothesis.
+
+
+\vspace{6mm} \hrule \vspace{6mm}
+
+
+(c) Which Predictor is Better? $P_1$ or $P_2$? (Quick Model Selection)
+
+\vspace{2mm}
+
+The regression summaries for Model 1 and Model 2 are provided in the tables below:
+
+```{r}
+coefTab1 <- cbind(IV = c("(Intercept)", "$P_1$"), as_tibble(signif(coef(sumP1), 5)))
+coefTab1[,5] <- as.character(signif(coefTab1[,5], 2))
+kbl(coefTab1, booktabs = T, align = "c", escape = F, digits = 2, valign = "c", 
+    col.names = c(" ", "$\\widehat{\\beta}_j$", "$s.e.$", "$t^{\\ast}$", "$\\textit{p-value}$")) %>%
+  kable_classic() %>%
+  kable_styling(latex_options = c("striped", "HOLD_position")) %>%
+  add_header_above(c("Model 1" = 5), bold = T, font_size = 12) %>% 
+  column_spec(1:5, width = "2cm")
+```
+
+
+```{r, echo=FALSE}
+# CoefTab1a <- kbl(coefTab1, booktabs = T, align = "c", escape = F, digits = 2, valign = "c",
+#                  col.names = c(" ", "$\\widehat{\\beta}_j$", "$s.e.$", "$t^{\\ast}$", "$\\textit{p-value}$")) %>%
+#   kable_classic() %>%
+#   kable_styling(latex_options = c("striped", "HOLD_position")) %>%
+#   add_header_above(c("Model 1" = 5), bold = T, font_size = 12) %>% 
+#   column_spec(1:5, width = "2cm")
+```
+
+
+```{r, echo=FALSE}
+coefTab2 <- cbind(IV = c("(Intercept)", "$P_2$"), as_tibble(signif(coef(sumP2), 5)))
+coefTab2[,5] <- as.character(signif(coefTab2[,5], 2))
+
+CoefTab2a <- kbl(coefTab2, booktabs = T, align = "c", escape = F, valign = "c", #position = "t", 
+    digits = 2, #c(2,2,2,2,5),
+    col.names = c(" ", "$\\widehat{\\beta}_j$", "$s.e.$", "$t^{\\ast}$", "$\\textit{p-value}$")) %>%
+  kable_classic() %>%
+  # kable_styling(latex_options = c("striped"), position = "float_right") %>%
+  # kable_styling(latex_options = c("striped", "hold_position"), position = "right") %>%
+  # kable_styling(latex_options = c("striped", "hold_position"), position = "float_right") %>%
+  # kable_styling(latex_options = c("striped", "hold_position")) %>%
+  kable_styling(latex_options = c("striped", "HOLD_position")) %>%
+  add_header_above(c("Model 2" = 5), bold = T, font_size = 12) %>% 
+  column_spec(1:5, width = "2cm")
+CoefTab2a
+```
+
+
+
+
+
+Both predictors are statistically significant as their \textit{p-values}\ are less than the desired level of significance, $\alpha = 0.05$.
+
+A quick way too access which predictor is better is comparing the $R^2$ and Mean Squared Error (MSE) statistics of each model. 
+$R^2$ measures a model's goodness-of-fit; MSE is statistic used to evaluate the prediction accuracy of a model. \vspace{-5mm}
+
+
+\begin{align*}
+R^2 = 1 - \frac{\text{SSE}}{\text{SST}} 
+& & \quad \text{and} \quad & &
+\text{MSE} = \frac{\text{SSE}}{n} = \frac{1}{n} \sum\limits_{i=1}^n \ (y_i - \hat{y_i})^2, 
+\end{align*}
+
+where 
+$\text{SST} = \sum_{i=1}^n \  (y_i - \bar{y})^2$ is the sum of squares in total,
+$n$ is the number of rows in the data $(n=22)$, and 
+$b$ is the number of regression coefficients in a model.
+
+For both Models 1 and 2, there is an intercept and one predictor so $b=2$;
+Model 3 has one addition coefficient so $b=3$
+
+- $0 \leq R^2 \leq 1$ such that $R^2$ is optimized when it is maximized. 
+
+- $\text{MSE} \geq 0$ such that MSE is optimized when it is minimized.
+
+
+
+```{r}
+ModStats <- tibble(" " = c("Model 1", "Model 2"), 
+                   `$R^2$ `= c(sumP1$r.squared, sumP2$r.squared), 
+                   `$\\textit{MSE}$` = c(mean(sumP1$residuals^2), mean(sumP2$residuals^2)))
+```
+
+
+\vspace{1mm}
+
+The values for both statistic are provided in the table below:
+
+\vspace{1mm}
+
+```{r, echo=FALSE}
+kbl(ModStats, booktabs = T, escape = F, digits = c(2, 4, 2), align = "c", valign = "c") %>% 
+  kable_classic() %>% 
+  kable_styling(latex_options = c("striped", "HOLD_position")) %>%
+  column_spec(1, bold = T) %>% 
+  column_spec(1:3, width = "3cm")
+```
+
+
+
+### \underline{\text{Conclusion}:}
+
+This quick model selection method indicates that $R^2$ is maximized and $\textit{MSE}$ is minimized by Model 2. 
+Therefore, I would prefer to use the second preliminary exam, $P_2$, to predict final exam scores, $F$.
+
+
+\vspace{6mm} \hrule \vspace{6mm}
+
+
+(d) Which of the three models with intercepts would you use to predict the final examination scores for a student who scored 78 and 85 on the first and second preliminary examinations, respectively? (Quick Model Selection) 
+    What is your prediction in this case?
+
+
+\vspace{2mm}
+
+$R^2$ becomes larger as more predictors are used to fit a model. 
+This means $R^2$ does not account the bias of larger models.
+
+In contrast, adjusted $R^2$ denoted $R^2_{adj}$ accounts for bias by punishing models as they add predictors: \vspace{-5mm}
+
+$$R^2_{adj} = 1 - \frac{\text{SSE} / (n-b)}{\text{SST} / (n-1)}  = 1 - \frac{\text{SSE} \cdot (n-1)}{\text{SST} \cdot (n-b)}.$$
+
+
+The following properties of $R^2$ still hold: $0 \leq R^2_{adj} \leq 1$ such that $R^2_{adj}$ is optimized when it is maximized.
+However, $R^2_{adj}$ decreases as predictors are added when all other values are fixed.
+
+Because Model 3 has an additional coefficient, $R^2_{adj}$ should be used to compare it to the smaller models instead of the unadjusted $R^2$. 
+
+
+```{r}
+ModStats2 <- tibble(" " = c("Model 1", "Model 2", "Model 3"), 
+              `$R^2_{adj}$ `= c(sumP1$adj.r.squared, sumP2$adj.r.squared, sumP1P2$adj.r.squared), 
+              `$\\textit{MSE}$` = c(mean(sumP1$residuals^2), mean(sumP2$residuals^2), mean(sumP1P2$residuals^2)))
+```
+
+
+\vspace{1mm}
+
+The values of $R^2_{adj}$ and $\text{MSE}$ for each model are displayed in the table below:
+
+\vspace{1mm}
+
+```{r, echo=FALSE}
+kbl(ModStats2, booktabs = T, escape = F, digits = c(2, 4, 2), align = "c", valign = "c") %>% 
+  kable_classic() %>% 
+  kable_styling(latex_options = c("striped", "HOLD_position")) %>%
+  column_spec(1, bold = T) %>% 
+  column_spec(1:3, width = "3cm")
+```
+
+
+
+### $\underline{\textbf{Conclusion:}}$
+
+$R^2_{adj}$ and $\text{MSE}$ were optimized by *Model 3*. 
+Recall, the estimated coefficients for *Model 3* derived in Part $(\mathrm{a})$: 
+
+- $\hat F =$ `r coefP1P2[[1]]` + `r coefP1P2[[2]]` $P_1$ + `r coefP1P2[[3]]` $P_2$
+
+
+Accordingly, if a student had preliminary examination scores $P_1 = 78$ and $P_2 = 85$, 
+*Model 3* predicts this student will have a final examination score of $\boxed{~ \hat{F} = 80.713 ~ \vphantom{\Large)}}$.
+
+
+```{r, echo=FALSE, include=F}
+predict(fit_P1P2, newdata = tibble(P1 = 78, P2 = 85))
+```
+
+
